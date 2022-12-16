@@ -1,6 +1,7 @@
 package util;
 
-import models.*;
+import models.Employee;
+import models.Unit;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,35 +22,35 @@ public final class IoUtils {
         return data;
     }
 
-    public static Employee readEmployee(DataInputStream in) throws IOException {
+    public static Employee readBrand(DataInputStream in) throws IOException {
         Employee employee = new Employee();
 
         String data = in.readUTF();
         String[] brandData = data.split(";");
         employee.setId(Integer.parseInt(brandData[0]));
-        employee.setUnit_id(Integer.parseInt(brandData[1]));
+        employee.setUnitId(Integer.parseInt(brandData[1]));
         employee.setSalary(Integer.parseInt(brandData[2]));
         employee.setName(brandData[3]);
 
         return employee;
     }
 
-    public static Unit readUnit(DataInputStream in) throws IOException {
+    public static Unit readManufacture(DataInputStream in) throws IOException {
         Unit unit = new Unit();
 
         String data = in.readUTF();
-        String[] unitData = data.split(";");
-        unit.setId(Integer.parseInt(unitData[0]));
-        unit.setName(unitData[1]);
+        String[] manufactureData = data.split(";");
+        unit.setId(Integer.parseInt(manufactureData[0]));
+        unit.setName(manufactureData[1]);
 
         return unit;
     }
 
-    public static void writeEmployee(DataOutputStream out, Employee employee) throws IOException {
-        out.writeUTF(join(";", Integer.toString(employee.getId()),  Integer.toString(employee.getUnit_id()),  Integer.toString(employee.getSalary()), employee.getName()));
+    public static void writeBrand(DataOutputStream out, Employee employee) throws IOException {
+        out.writeUTF(join(";", Integer.toString(employee.getId()),  Integer.toString(employee.getUnitId()),  Integer.toString(employee.getSalary()), employee.getName()));
     }
 
-    public static void writeUnit(DataOutputStream out, Unit unit) throws IOException {
+    public static void writeManufacture(DataOutputStream out, Unit unit) throws IOException {
         out.writeUTF(join(";", Integer.toString(unit.getId()), unit.getName()));
     }
 

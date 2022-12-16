@@ -1,112 +1,58 @@
 package client;
 
-import models.*;
-import util.IoUtils;
+import models.Employee;
+import models.Unit;
+import rmi.RmiServer;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 public class Client {
-    private Socket socket;
-    private final String host;
-    private final int port;
-    private DataInputStream in;
-    private DataOutputStream out;
+    public static void main(String[] args)
+            throws MalformedURLException, NotBoundException, RemoteException, InterruptedException {
+        RmiServer server = (RmiServer) Naming.lookup("//localhost:22222/server");
 
-    public Client(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
+        System.out.println("Connected");
+        boolean res;
+        res =  server.insertUnit(new Unit(1, "Recruitment_unit"));
+        System.out.println("Insert unit Recruitment_unit " + res);
+        res =  server.insertUnit(new Unit(2, "Accounting_unit"));
+        System.out.println("Insert unit Accounting_unit " + res);
+        res =  server.insertUnit(new Unit(3, "Training_unit"));
+        System.out.println("Insert unit Training_unit " + res);
 
-    public void connect() throws IOException {
-        socket = new Socket(host, port);
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
-    }
 
-    public void disconnect() throws IOException {
-        socket.close();
-    }
+        res = server.insertEmployee(new Employee(1, 1, "Petrov", 1000));
+        System.out.println("Insert new employee " + res);
+        res = server.insertEmployee(new Employee(2, 1, "Zelechyn", 1700));
+        System.out.println("Insert new employee " + res);
+        res = server.insertEmployee(new Employee(3, 1, "Kilko", 2000));
+        System.out.println("Insert new employee " + res);
 
-    public boolean insertUnit(Unit unit) throws IOException {
-        IoUtils.writeString(out, "insertUnit");
-        IoUtils.writeUnit(out, unit);
+        res = server.insertEmployee(new Employee(4, 2, "Mirova", 1000));
+        System.out.println("Insert new employee " + res);
+        res = server.insertEmployee(new Employee(5, 2, "Nevedrov", 2700));
+        System.out.println("Insert new employee " + res);
+        res = server.insertEmployee(new Employee(6, 3, "Frankov", 3000));
+        System.out.println("Insert new employee " + res);
 
-        return in.readBoolean();
-    }
 
-    public boolean deleteUnit(int id) throws IOException {
-        IoUtils.writeString(out, "deleteUnit");
-        out.writeInt(id);
+        res = server.moveToAnotherUnit(1, 3);
+        System.out.println("Move employee with id 1 to unit Training_unit " + res);
+        res = server.deleteEmployee(4);
+        System.out.println("Delete employee with id 4 " + res);
+        res = server.deleteEmployee(5);
+        System.out.println("Delete employee with id 5 " + res);
+        res = server.deleteUnit(2);
+        System.out.println("Delete unit with id 2 " + res);
+        //System.out.println(server.findEmployeesByUnitName("Recruitment_unit"));
+        //System.out.println("Find employees for Recruitment_unit");
+        System.out.println(server.findAllUnits());
+        System.out.println("Find all units");
+//        server.disconnect();
 
-        return in.readBoolean();
-    }
-
-    public boolean insertEmployee(Employee employee) throws IOException {
-        IoUtils.writeString(out, "insertEmployee");
-        IoUtils.writeEmployee(out, employee);
-        return in.readBoolean();
-    }
-
-    public boolean deleteEmployee(int id) throws IOException {
-        IoUtils.writeString(out, "deleteEmployee");
-        out.writeInt(id);
-
-        return in.readBoolean();
-    }
-
-    public boolean updateEmployee(Employee employee) throws IOException {
-        IoUtils.writeString(out, "updateEmployee");
-        IoUtils.writeEmployee(out, employee);
-
-        return in.readBoolean();
-    }
-
-    public boolean moveToAnotherUnit(int employeeId, int newUnitId) throws IOException {
-        IoUtils.writeString(out, "moveToAnotherUnit");
-        out.writeInt(employeeId);
-        out.writeInt(newUnitId);
-
-        return in.readBoolean();
-    }
-
-    public List<Employee> findEmployeesByUnitName(String unitName) throws IOException {
-        IoUtils.writeString(out, "findEmployeesByUnitName");
-        IoUtils.writeString(out, unitName);
-
-        return readEmployees();
-    }
-
-    public List<Unit> findAllUnits() throws IOException {
-        IoUtils.writeString(out, "findAllUnits");
-
-        return readUnits();
-    }
-
-    private List<Employee> readEmployees() throws IOException {
-        List<Employee> result = new ArrayList<>();
-        int listSize = in.readInt();
-
-        for (int i = 0; i < listSize; i++) {
-            result.add(IoUtils.readEmployee(in));
-        }
-
-        return result;
-    }
-
-    private List<Unit> readUnits() throws IOException {
-        List<Unit> result = new ArrayList<>();
-        int listSize = in.readInt();
-        System.out.println(listSize);
-
-        for (int i = 0; i < listSize; i++) {
-            result.add(IoUtils.readUnit(in));
-        }
-
-        return result;
+        System.out.println("Disconnected");
     }
 }

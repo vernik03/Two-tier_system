@@ -7,8 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="part_1" />
-        <module name="Socket" />
+        <module name="part_2" />
+        <module name="RMI" />
       </profile>
     </annotationProcessing>
   </component>

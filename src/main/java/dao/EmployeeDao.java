@@ -23,7 +23,7 @@ public class EmployeeDao {
                 if (((ResultSet) rs).next()) {
                     Employee employee = new Employee();
                     employee.setId(rs.getInt("id"));
-                    employee.setUnit_id(rs.getInt("unit_id"));
+                    employee.setUnitId(rs.getInt("unit_id"));
                     employee.setSalary(rs.getInt("salary"));
                     employee.setName(rs.getString("name"));
                     result = Optional.of(employee);
@@ -48,7 +48,7 @@ public class EmployeeDao {
                 while (rs.next()) {
                     Employee employee = new Employee();
                     employee.setId(rs.getInt("id"));
-                    employee.setUnit_id(rs.getInt("unit_id"));
+                    employee.setUnitId(rs.getInt("unit_id"));
                     employee.setName(rs.getString("name"));
                     employee.setSalary(rs.getInt("salary"));
                     result.add(employee);
@@ -67,7 +67,7 @@ public class EmployeeDao {
         try (Connection connection = Connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, updated.getUnit_id());
+            statement.setInt(1, updated.getUnitId());
             statement.setString(2, updated.getName());
             statement.setInt(3, updated.getSalary());
             statement.setInt(4, updated.getId());
@@ -80,7 +80,7 @@ public class EmployeeDao {
     }
 
     public boolean deleteById(int id) {
-        final String sql = "DELETE FROM employees WHERE id = ?";
+        final String sql = "DELETE FROM hr_department.employees WHERE id = ?";
 
         try (Connection connection = Connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -100,7 +100,7 @@ public class EmployeeDao {
         try (Connection connection = Connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, toInsert.getUnit_id());
+            statement.setInt(1, toInsert.getUnitId());
             statement.setString(2, toInsert.getName());
             statement.setInt(3, toInsert.getSalary());
             int insertedCount = statement.executeUpdate();
@@ -112,8 +112,8 @@ public class EmployeeDao {
     }
     public List<Employee> findByUnitName(String unitName) {
         final String sql = """
-            SELECT * FROM employees WHERE unit_id = (
-                SELECT id FROM units WHERE units.name = ?
+            SELECT * FROM hr_department.employees WHERE unit_id = (
+                SELECT id FROM hr_department.units WHERE units.name = ?
             )
         """;
 
@@ -124,7 +124,7 @@ public class EmployeeDao {
             List<Employee> result;
 
             try (ResultSet rs = statement.executeQuery()) {
-                result = getBrandsFromResultSet(rs);
+                result = getEmployeesFromResultSet(rs);
             }
 
             return result;
@@ -133,27 +133,27 @@ public class EmployeeDao {
         }
     }
 
-    public boolean moveToAnotherUnit(int brandId, int newUnitID) {
-        Optional<Employee> optionalBrand = findById(brandId);
+    public boolean moveToAnotherUnit(int employeeId, int newUnitID) {
+        Optional<Employee> optionalEmployee = findById(employeeId);
 
-        if (optionalBrand.isEmpty()) {
+        if (optionalEmployee.isEmpty()) {
             return false;
         }
 
-        Employee employee = optionalBrand.get();
-        employee.setUnit_id(newUnitID);
+        Employee employee = optionalEmployee.get();
+        employee.setUnitId(newUnitID);
         update(employee);
 
         return true;
     }
 
-    private List<Employee> getBrandsFromResultSet(ResultSet rs) throws SQLException {
+    private List<Employee> getEmployeesFromResultSet(ResultSet rs) throws SQLException {
         List<Employee> result = new ArrayList<>();
 
         while (rs.next()) {
             Employee employee = new Employee();
             employee.setId(rs.getInt("id"));
-            employee.setUnit_id(rs.getInt("unit_id"));
+            employee.setUnitId(rs.getInt("unit_id"));
             employee.setSalary(rs.getInt("salary"));
             employee.setName(rs.getString("name"));;
             result.add(employee);

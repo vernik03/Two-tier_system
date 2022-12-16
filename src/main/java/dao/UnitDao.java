@@ -7,8 +7,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
 public class UnitDao {
     public Optional<Unit> findById(int id) {
         final String sql = "SELECT * FROM units WHERE id = ?";
@@ -89,11 +87,11 @@ public class UnitDao {
     }
 
     public boolean insert(Unit toInsert) {
-
         final String sql = "INSERT INTO units(name) VALUES(?)";
 
         try (Connection connection = Connector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setString(1, toInsert.getName());
             int insertedCount = statement.executeUpdate();
 
