@@ -5,3 +5,4 @@ https://drive.google.com/drive/folders/1ULbIcS2xpEACEMpqL9qhSIfzJXO9DeYK
 
 Консольна реалізація дворівневої системи. Клієнт з меню , на серверній частині DAO клас взаємодії з DBMS.
 Передача за допомогою Socket
+Передача за допомогою RMI
